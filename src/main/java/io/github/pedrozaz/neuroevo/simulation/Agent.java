@@ -25,16 +25,18 @@ public class Agent {
     }
 
     public void think(Vector2D target) {
-        double[] inputs = new double[4];
-        inputs[0] = this.position.x / 800.0;
-        inputs[1] = this.position.y / 600.0;
-        inputs[2] = target.x / 800.0;
-        inputs[3] = target.y / 600.0;
+        double dx = (target.x - this.position.x) / 800.0;
+        double dy = (target.y - this.position.y) / 600.0;
+
+        double vx = this.velocity.x / MAX_SPEED;
+        double vy = this.velocity.y / MAX_SPEED;
+
+        double[] inputs = {dx, dy, vx, vy};
 
         double[] outputs = this.brain.predict(inputs);
 
-        double forceX = map(outputs[0], 0, 1, -MAX_FORCE, MAX_FORCE);
-        double forceY = map(outputs[1], 0, 1, -MAX_FORCE, MAX_FORCE);
+        double forceX = outputs[0] * MAX_FORCE;
+        double forceY = outputs[1] * MAX_FORCE;
 
         Vector2D desiredForce = new Vector2D(forceX, forceY);
         applyForce(desiredForce);

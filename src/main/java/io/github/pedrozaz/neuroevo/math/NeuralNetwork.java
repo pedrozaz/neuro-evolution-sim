@@ -37,18 +37,18 @@ public class NeuralNetwork {
         Matrix hidden = Matrix.mult(weightsInputHidden, inputs);
         hidden.add(biasHidden);
 
-        hidden.map(this::sigmoid);
+        hidden.map(this::tanh);
 
         Matrix output = Matrix.mult(weightsHiddenOutput, hidden);
         output.add(biasOutput);
 
-        output.map(this::sigmoid);
+        output.map(this::tanh);
 
         List<Double> outputList = output.toArray();
         return outputList.stream().mapToDouble(d -> d).toArray();
     }
 
-    private double sigmoid(double x) {
-        return 1 / (1 + Math.exp(-x));
+    private double tanh(double x) {
+        return Math.tan(x);
     }
 }
