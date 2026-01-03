@@ -5,6 +5,8 @@ import io.github.pedrozaz.neuroevo.math.Vector2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.List;
+
 public class Agent {
     private Vector2D position;
     private Vector2D velocity;
@@ -15,6 +17,9 @@ public class Agent {
     private static final double MAX_SPEED = 5.0;
     private static final double MAX_FORCE = 0.2;
     private static final int SIZE = 10;
+
+    public boolean dead;
+    public boolean reachedTarget = false;
 
     public Agent(double x, double y) {
         this.position = new Vector2D(x, y);
@@ -51,11 +56,29 @@ public class Agent {
     }
 
     public void update() {
+        if (dead | reachedTarget) return;
+
         this.velocity.add(this.acceleration);
         this.velocity.limit(MAX_SPEED);
         this.position.add(this.velocity);
         this.acceleration.mult(0);
         handleBoundaries();
+    }
+
+    public void checkCollision(List<Obstacle> obstacles, Vector2D target) {
+        if (dead | reachedTarget) return;
+
+        for (Obstacle obs : obstacles) {
+            if (obs.contains(position.x, position.y)) {
+                this.dead = true;
+                return;
+            }
+        }
+
+        double distToTarget = distanceTo(target);
+        if (distToTarget < 15) {
+            this.reachedTarget = true;
+        }
     }
 
     private void handleBoundaries() {
@@ -80,13 +103,17 @@ public class Agent {
     }
 
     public void render(GraphicsContext gc) {
-        if (isChampion) {
+        if (dead) {
+            gc.setFill(Color.DARKRED);
+        } else if (reachedTarget) {
+            gc.setFill(Color.GOLD);
+        } else if (isChampion) {
             gc.setFill(Color.LIGHTGREEN);
-            gc.fillOval(position.x, position.y, 10, 10);
         } else {
-            gc.setFill(Color.rgb(255, 255, 255, 0.5));
-            gc.fillOval(position.x, position.y, 10, 10);
+            gc.setFill(Color.WHITESMOKE);
         }
+
+        gc.fillOval(position.x, position.y, 10, 10);
     }
 
     public double distanceTo(Vector2D target) {
