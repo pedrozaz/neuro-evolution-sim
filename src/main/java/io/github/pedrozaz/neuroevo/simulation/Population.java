@@ -23,10 +23,11 @@ public class Population {
         }
     }
 
-    public void update() {
+    public void update(List<Obstacle> obstacles) {
         for (Agent agent : agents) {
             agent.think(target);
             agent.update();
+            agent.checkCollision(obstacles, target);
         }
     }
 
