@@ -2,6 +2,7 @@ package io.github.pedrozaz.neuroevo;
 
 import io.github.pedrozaz.neuroevo.math.Vector2D;
 import io.github.pedrozaz.neuroevo.simulation.Agent;
+import io.github.pedrozaz.neuroevo.simulation.Population;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -16,8 +17,10 @@ public class Main extends Application {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
 
-    private Agent agent;
+    private Population population;
     private Vector2D target;
+    private int frameCount = 0;
+    private static final int LIFETIME = 400;
 
     @Override
     public void start(Stage primaryStage) {
@@ -26,8 +29,8 @@ public class Main extends Application {
         root.getChildren().add(canvas);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        agent = new Agent(WIDTH / 2.0, HEIGHT / 2.0);
-        target = new Vector2D(100, 100);
+        target = new Vector2D(WIDTH / 2.0, 50);
+        population = new Population(100, target);
 
         Scene scene = new Scene(root, WIDTH, HEIGHT, Color.BLACK);
 
@@ -50,8 +53,13 @@ public class Main extends Application {
     }
 
     private void update() {
-        agent.think(target);
-        agent.update();
+        population.update();
+        frameCount++;
+
+        if (frameCount >= LIFETIME) {
+            population.evolve();
+            frameCount = 0;
+        }
     }
 
     private void render(GraphicsContext gc) {
@@ -61,7 +69,10 @@ public class Main extends Application {
         gc.setFill(Color.RED);
         gc.fillOval(target.x, target.y, 20, 20);
 
-        agent.render(gc);
+        population.render(gc);
+
+        gc.setFill(Color.WHITE);
+        gc.fillText("Remaining frames: " + (LIFETIME - frameCount), 10, 20);
     }
 
     public static void main(String[] args) {

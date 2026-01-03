@@ -76,4 +76,14 @@ public class Matrix {
         }
         return temp;
     }
+
+    public Matrix copy() {
+        Matrix m = new Matrix(rows, cols);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                m.data[i][j] = this.data[i][j];
+            }
+        }
+        return m;
+    }
 }

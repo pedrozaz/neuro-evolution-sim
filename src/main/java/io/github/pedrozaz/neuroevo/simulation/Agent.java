@@ -80,7 +80,28 @@ public class Agent {
     }
 
     public void render(GraphicsContext gc) {
-        gc.setFill(Color.WHITESMOKE);
-        gc.fillOval(position.x, position.y, 10, 10);
+        if (isChampion) {
+            gc.setFill(Color.LIGHTGREEN);
+            gc.fillOval(position.x, position.y, 10, 10);
+        } else {
+            gc.setFill(Color.rgb(255, 255, 255, 0.5));
+            gc.fillOval(position.x, position.y, 10, 10);
+        }
     }
+
+    public double distanceTo(Vector2D target) {
+        double dx = this.position.x - target.x;
+        double dy = this.position.y - target.y;
+        return Math.sqrt(dx*dx + dy*dy);
+    }
+
+    public NeuralNetwork getBrain() {
+        return this.brain;
+    }
+
+    public void setBrain(NeuralNetwork brain) {
+        this.brain = brain;
+    }
+
+    public boolean isChampion = false;
 }

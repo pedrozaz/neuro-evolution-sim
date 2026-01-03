@@ -48,6 +48,37 @@ public class NeuralNetwork {
         return outputList.stream().mapToDouble(d -> d).toArray();
     }
 
+    public NeuralNetwork copy() {
+        NeuralNetwork clone = new NeuralNetwork(this.inputNodes, this.hiddenNodes, this.outputNodes);
+
+        clone.weightsInputHidden = this.weightsInputHidden.copy();
+        clone.weightsHiddenOutput = this.weightsHiddenOutput.copy();
+        clone.biasHidden = this.biasHidden.copy();
+        clone.biasOutput = this.biasOutput.copy();
+        return clone;
+    }
+
+    public void mutate(double rate) {
+        mutateMatrix(weightsInputHidden, rate);
+        mutateMatrix(weightsHiddenOutput, rate);
+        mutateMatrix(biasHidden, rate);
+        mutateMatrix(biasOutput, rate);
+    }
+
+    private void mutateMatrix(Matrix m, double rate) {
+        for (int i = 0; i < m.rows; i++) {
+            for (int j = 0; j < m.cols; j++) {
+                if (Math.random() < rate) {
+                    double mutation = (Math.random() * 2 - 1) * 0.1;
+                    m.data[i][j] += mutation;
+
+                    if (m.data[i][j] > 1) m.data[i][j] = 1;
+                    if (m.data[i][j] < -1) m.data[i][j] = -1;
+                }
+            }
+        }
+    }
+
     private double tanh(double x) {
         return Math.tan(x);
     }
