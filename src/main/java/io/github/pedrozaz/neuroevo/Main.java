@@ -16,17 +16,25 @@ public class Main extends Application {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
 
-    private Agent testAgent = new Agent(WIDTH / 2.0, HEIGHT / 2.0);
+    private Agent agent;
+    private Vector2D target;
 
     @Override
     public void start(Stage primaryStage) {
         Pane root = new Pane();
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
         root.getChildren().add(canvas);
-
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
+        agent = new Agent(WIDTH / 2.0, HEIGHT / 2.0);
+        target = new Vector2D(100, 100);
+
         Scene scene = new Scene(root, WIDTH, HEIGHT, Color.BLACK);
+
+        canvas.setOnMouseClicked(e -> {
+            target.x = e.getX();
+            target.y = e.getY();
+        });
 
         primaryStage.setTitle("Neuroevolution Simulator");
         primaryStage.setScene(scene);
@@ -42,18 +50,18 @@ public class Main extends Application {
     }
 
     private void update() {
-        Vector2D randomForce = Vector2D.random2D();
-        randomForce.mult(0.5);
-
-        testAgent.applyForce(randomForce);
-        testAgent.update();
+        agent.think(target);
+        agent.update();
     }
 
     private void render(GraphicsContext gc) {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, WIDTH, HEIGHT);
 
-        testAgent.render(gc);
+        gc.setFill(Color.RED);
+        gc.fillOval(target.x, target.y, 20, 20);
+
+        agent.render(gc);
     }
 
     public static void main(String[] args) {
